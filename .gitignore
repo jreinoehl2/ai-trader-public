@@ -1,0 +1,7 @@
+CLAUDE.md
+venv
+.idea
+__pycache__
+
+# Environment variables (contains API keys)
+.env
