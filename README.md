@@ -1,11 +1,6 @@
 # AI Trader
 Welcome to the repo behind my trading experiment where AI manages a real-money portfolio.
 
-## Repository Structure
-
-- **`trading_script.py`** - Main trading engine with portfolio management and stop-loss automation
-- **`Scripts and CSV Files/`** - My personal portfolio
-
 # The Concept
 **Can powerful large language models like ChatGPT actually generate smart trading decisions using real-time data?**
 
