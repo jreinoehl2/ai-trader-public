@@ -1,224 +1,118 @@
-# AI Trader API# AI Trader API
-
-
-
-A FastAPI-based trading API that enables AI-driven trading decisions through integration with Alpaca's paper trading platform.A FastAPI-based trading API that enables AI-driven trading decisions through integration with Alpaca's paper trading platform.
-
-
-
-## The Concept## The Concept
-
-
-
-**Can AI make intelligent trading decisions through a simple, constrained API?****Can AI make intelligent trading decisions through a simple, constrained API?**
-
-
-
-This project provides a RESTful API that:This project provides a RESTful API that:
-
-- Accepts natural language trading commands (e.g., "buy NVDA --2")- Accepts natural language trading commands (e.g., "buy NVDA --2")
-
-- Validates trades against safety rules and market conditions- Validates trades against safety rules and market conditions
-
-- Executes orders through Alpaca's paper trading API- Executes orders through Alpaca's paper trading API
-
-- Enforces symbol whitelists and order value caps for risk management- Enforces symbol whitelists and order value caps for risk management
-
-
-
-## Architecture# Features of This Repo
-
-- Live trading scripts — used to evaluate prices and update holdings daily  
-
-### API Server (`/server`)- LLM-powered decision engine — ChatGPT picks the trades  
-
-- **FastAPI** web framework with CORS support- Performance tracking — CSVs with daily PnL, total equity, and trade history  
-
-- **Alpaca integration** for market data and order execution- Visualization tools — Matplotlib graphs comparing ChatGPT vs. Index  
-
-- **Trade validation** with configurable safety guards- Logs & trade data — auto-saved logs for transparency  
-
-- **Docker deployment** ready for Render.com
-
-# Why This Matters
-
-### Key ComponentsAI is being hyped across every industry, but can it really manage money without guidance?
-
-- `api.py` - REST endpoints for trading operations
-
-- `alpaca.py` - Alpaca API client wrapperThis project is an attempt to find out — with transparency, data, and a real budget.
-
-- `config.py` - Environment-based configuration
-
-- `main.py` - FastAPI application entry point# Future Enhancements
-
-
-
-## FeaturesThe next evolution of AI Trader is full autonomy — transforming it from a semi-automated experiment into a fully self-sufficient trading system. Here’s what’s planned:
-
-
-
-### Trading Controls1. Real-Time Data Ingestion
-
-- **Symbol Whitelist** - Only approved stocks can be traded (AAPL, MSFT, NVDA, SPY)
-
-- **Order Value Caps** - Maximum $3,000 per order to limit risk- The system will automatically pull live market data using APIs (Alpaca, Polygon.io, or WebSocket-based feeds) instead of relying on manual CSV uploads.
-
-- **Market Hours Validation** - Prevents trading when market is closed
-
-- **Cash Balance Checks** - Ensures sufficient funds before placing orders- It will continuously monitor price movements, technical indicators, and stop-loss conditions throughout the day.
-
-
-
-### API Endpoints2. Autonomous Decision-Making
-
-- `POST /buy-text` - Natural language trade commands
-
-- `POST /order` - Direct order placement- Using the live data stream, the AI engine will independently decide when to buy, sell, or hold — applying portfolio optimization and risk management logic without human intervention.
-
-- `GET /account` - Account balance and positions
-
-- `GET /positions` - Current holdings- Human input will shift from “manual trader” to “observer.”
-
-- `GET /healthz` - Health check for monitoring
-
-3. Automated Trade Execution
-
-## Tech Stack
-
-- Integration with a real brokerage API (like Alpaca or Interactive Brokers) will allow the system to place live trades automatically.
-
-- **FastAPI** - Modern Python web framework
-
-- **Uvicorn** - ASGI server- Stop-losses, take-profits, and order types (MOO, limit, trailing stop) will all be handled programmatically.
-
-- **Pydantic** - Data validation
-
-- **Alpaca API** - Paper trading platform4. User Notifications & Transparency
-
-- **Docker** - Containerized deployment
-
-- **Render.com** - Cloud hosting platform- Every major decision — from trade execution to portfolio rebalancing — will trigger an instant notification via email or Microsoft Teams message.
-
-
-
-## Setup- This ensures full visibility into the AI’s actions and reasoning, keeping the user (me) informed in real time.
-
-
-
-### Prerequisites5. Continuous Learning & Evaluation
-
-- Python 3.11+
-
-- Alpaca paper trading account- Future iterations may leverage reinforcement learning or fine-tuned LLM feedback loops to improve strategy adaptively based on performance metrics.
-
-- API keys from Alpaca
-
-# Tech Stack & Features
-
-### Installation
-
-## Core Technologies
-
-1. Clone the repository:- **Python** - Core scripting and automation
-
-```bash- **pandas + yFinance** - Market data fetching and analysis
-
-git clone https://github.com/jreinoehl2/ai-trader-public.git- **Matplotlib** - Performance visualization and charting
-
-cd ai-trader-public- **ChatGPT-4** - AI-powered trading decision engine
-
+# AI Trader API
+
+Clean, minimal FastAPI service that lets an AI (or a human script) place paper trades through Alpaca with guardrails for risk management.
+
+## 1. Overview
+The project exposes a small, opinionated trading API. It focuses on safety (whitelisted symbols, per‑order dollar caps, market‑open checks) rather than strategy. You can layer an AI decision engine on top without giving it unlimited power.
+
+## 2. Core Concept
+Can an AI make sensible trading decisions if you give it a constrained, transparent interface? This API is that interface: it accepts structured or simple natural language trade commands and enforces limits before forwarding to Alpaca's paper trading endpoint.
+
+## 3. Features
+| Category | Highlights |
+|----------|-----------|
+| Order Safety | Symbol whitelist, max dollar value per order, cash balance & market‑open validation |
+| Command Parsing | Natural language shortcut (e.g. `buy NVDA --2`) mapped to structured order model |
+| Paper Trading | All activity confined to Alpaca paper account |
+| Health & Status | Account, positions, health endpoint for deployment checks |
+| Deployment Ready | Docker + `render.yaml` for Render.com hosting |
+
+## 4. Architecture
+```
+root
+├─ render.yaml              # Render.com service definition
+├─ server/
+│  ├─ requirements.txt      # Python dependencies (FastAPI, Alpaca helpers etc.)
+│  └─ app/
+│     ├─ main.py            # FastAPI app factory & middleware
+│     ├─ api.py             # Route handlers & validation helpers
+│     ├─ alpaca.py          # Thin wrapper around Alpaca REST API
+│     ├─ config.py          # Environment variable loading & constants
+│     └─ Dockerfile         # Container image build instructions
+├─ bot/                     # (Placeholder for future AI decision agent)
+├─ widget/                  # (Placeholder for future dashboard/UI)
+└─ README.md
 ```
 
-## Key Features
+### Key Modules
+- `main.py` sets up the FastAPI app with CORS.
+- `api.py` contains endpoint handlers plus internal guard functions.
+- `alpaca.py` abstracts Alpaca REST calls (account, quotes, orders).
+- `config.py` reads environment variables (e.g. `ALLOWED_SYMBOLS`, `MAX_ORDER_VALUE`).
 
-2. Create a virtual environment:- **Robust Data Sources** - Yahoo Finance primary, Stooq fallback for reliability
+## 5. API Endpoints (Planned / Implemented)
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/buy-text` | Accept natural language order string (e.g. `buy AAPL --1`). |
+| POST | `/order` | Place structured order `{ symbol, qty, side }`. |
+| GET  | `/account` | Retrieve paper account balances & status. |
+| GET  | `/positions` | List open positions. |
+| GET  | `/healthz` | Simple health check for Render.
 
-```bash- **Automated Stop-Loss** - Automatic position management with configurable stop-losses
+## 6. Data & Validation Flow
+1. Incoming request (text or JSON).
+2. Parse into `OrderRequest` (Pydantic model).
+3. Guards run:
+   - Symbol is uppercased & checked against whitelist.
+   - Market open verified from Alpaca clock.
+   - Latest quote retrieved; estimated cost computed.
+   - Cash & per‑order cap enforced.
+4. Order forwarded to Alpaca paper endpoint (not shown in README code but handled in `alpaca.py`).
 
-python -m venv .venv- **Interactive Trading** - Market-on-Open (MOO) and limit order support
+## 7. Environment Variables
+| Name | Description | Example |
+|------|-------------|---------|
+| `ALPACA_API_KEY` | Alpaca paper trading API key | `PKxxxxxxxx` |
+| `ALPACA_API_SECRET` | Alpaca paper trading secret | `SKxxxxxxxx` |
+| `ALLOWED_SYMBOLS` | Comma list of tradable tickers | `AAPL,MSFT,NVDA,SPY` |
+| `MAX_ORDER_VALUE` | Max dollar value per single order | `3000` |
 
-.venv\Scripts\activate  # Windows- **Backtesting Support** - ASOF_DATE override for historical analysis
+Add a `.env` file (based on `server/.env.example`) or configure via Render dashboard. Never commit real keys.
 
-# or- **Performance Analytics** - CAPM analysis, Sharpe/Sortino ratios, drawdown metrics
-
-source .venv/bin/activate  # macOS/Linux- **Trade Logging** - Complete transparency with detailed execution logs
-
-```
-
-## System Requirements
-
-3. Install dependencies:- Python  3.11+
-
-```bash- Internet connection for market data
-
-pip install -r server/requirements.txt- ~10MB storage for CSV data files
-
-```
-
-4. Configure environment variables:
+## 8. Installation
 ```bash
-cp server/.env.example server/.env
-# Edit server/.env with your Alpaca API credentials
+git clone https://github.com/jreinoehl2/ai-trader-public.git
+cd ai-trader-public
+python -m venv .venv
+.venv\Scripts\activate                # Windows
+pip install -r server/requirements.txt
+cp server/.env.example server/.env     # then edit values
 ```
 
-5. Run the development server:
+## 9. Running Locally
 ```bash
 cd server/app
 uvicorn main:app --reload
+# Visit http://localhost:8000
 ```
 
-The API will be available at `http://localhost:8000`
-
-## Configuration
-
-Environment variables (set in `.env` or deployment platform):
-
-- `ALPACA_API_KEY` - Your Alpaca API key
-- `ALPACA_API_SECRET` - Your Alpaca secret key
-- `ALLOWED_SYMBOLS` - Comma-separated list of tradeable symbols (default: AAPL,MSFT,NVDA,SPY)
-- `MAX_ORDER_VALUE` - Maximum dollar value per order (default: 3000)
-
-## Deployment
-
-This project is configured for deployment on Render.com using Docker.
-
-1. Push to GitHub
-2. Connect repository to Render
-3. Configure environment variables in Render dashboard
-4. Deploy using `render.yaml` configuration
-
-## API Usage Examples
-
-### Place a trade using natural language:
+## 10. Example Usage
 ```bash
-curl -X POST "http://localhost:8000/buy-text" \
+curl -X POST http://localhost:8000/buy-text \
   -H "Content-Type: application/json" \
-  -d '{"command": "buy NVDA --2"}'
+  -d '{"command":"buy NVDA --2"}'
+
+curl http://localhost:8000/account
+curl http://localhost:8000/positions
 ```
 
-### Check account status:
-```bash
-curl "http://localhost:8000/account"
-```
+## 11. Safety & Limitations
+- Paper trading only (no real capital risk by default).
+- Whitelist & dollar caps prevent over‑exposure.
+- No strategy logic included – this layer is intentionally thin.
+- External AI agent integration left to user (e.g. call endpoints from a separate process).
 
-### View current positions:
-```bash
-curl "http://localhost:8000/positions"
-```
+## 12. Roadmap
+- Implement remaining endpoints in `api.py` (account, positions if not complete).
+- Add rate limiting & audit logging.
+- Introduce AI agent module in `bot/` for autonomous decision cycles.
+- Add test suite (Pytest) & CI workflow.
+- Basic front‑end dashboard in `widget/`.
 
-## Safety Features
+## 13. Contributing
+Open an issue or fork & PR. Please include:
+- Clear description of the change.
+- Tests covering new behavior (once test framework added).
 
-- **Paper Trading Only** - All trades execute on Alpaca's paper trading platform
-- **Pre-trade Validation** - Symbols, cash, and market hours checked before execution
-- **Order Limits** - Per-order caps prevent excessive risk
-- **Restricted Symbols** - Only whitelisted stocks can be traded
-
-## Future Enhancements
-
-- **AI Agent Integration** - Connect LLM-based decision engine
-- **Performance Analytics** - Track PnL, Sharpe ratio, drawdowns
-- **Webhook Notifications** - Real-time alerts via email/Teams
-- **Advanced Order Types** - Stop-loss, take-profit, trailing stops
-- **Portfolio Optimization** - Automated rebalancing and risk management
-- **Frontend Dashboard** - React-based UI for monitoring and control
+## 14. License
+Add a license file (MIT recommended) – currently unspecified.
