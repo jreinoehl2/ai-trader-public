@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: trader-api
+    runtime: docker
+    dockerfilePath: ./server/app/Dockerfile
+    dockerContext: ./server
+    plan: starter
+    autoDeploy: true
+    region: oregon
+    healthCheckPath: /healthz
+    envVars:
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_API_SECRET
+        sync: false
+      - key: ALLOWED_SYMBOLS
+        value: AAPL,MSFT,NVDA,SPY
+      - key: MAX_ORDER_VALUE
+        value: "3000"
