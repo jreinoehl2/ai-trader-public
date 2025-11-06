@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 import requests
-from config import ALPACA_BASE, ALPACA_KEY, ALPACA_SECRET, REQUEST_TIMEOUT
+from .config import ALPACA_BASE, ALPACA_KEY, ALPACA_SECRET, REQUEST_TIMEOUT
 
 class AlpacaAPI:
     def __init__(self, base_url: str = ALPACA_BASE, api_key: str = ALPACA_KEY, api_secret: str = ALPACA_SECRET):
