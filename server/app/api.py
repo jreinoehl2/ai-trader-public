@@ -48,9 +48,6 @@ def _guard_cash_for_buy(symbol: str, qty: int):
 def _parse_buy_text(cmd: str) -> OrderRequest:
     # Strict grammar: "buy NVDA --2" or "sell AAPL --1"
     parts = cmd.strip().split()
-    if len(parts) != 3 or parts[1].startswith("--") is False or parts[2].startswith("--"):
-        # allow "buy NVDA --2"
-        pass
     # Minimal robust parse:
     try:
         side = parts[0].lower()
@@ -69,8 +66,8 @@ def _parse_buy_text(cmd: str) -> OrderRequest:
     return OrderRequest(symbol=symbol, qty=qty, side=side)
 
 # Routes
-@router.get("/healthz")
-def healthz():
+@router.get("/health")
+def health():
     return {"ok": True}
 
 @router.get("/portfolio")
